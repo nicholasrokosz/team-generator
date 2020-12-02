@@ -14,14 +14,55 @@ const render = require("./lib/htmlRenderer");
 const { inherits } = require("util");
 
 let people = [];
+// let anotherOne = false;
+// const getInfo = () => {
+//   inquirer.prompt(questions).then((input) => {
+//     let {
+//       name,
+//       id,
+//       email,
+//       employeeType,
+//       officeNumber,
+//       github,
+//       school,
+//       another,
+//     } = input;
+//     let e;
+//     if (employeeType === "Manager") {
+//       e = new Manager(name, id, email, officeNumber);
+//     } else if (employeeType === "Engineer") {
+//       e = new Engineer(name, id, email, github);
+//     } else if (employeeType === "Intern") {
+//       e = new Intern(name, id, email, school);
+//     }
+//     people.push(e);
+//     if (another) anotherOne = true;
+//   });
+// };
 
-inquirer.prompt(questions).then((input) => {
-  let e = new Employee(input.name, input.id, input.email);
-  people.push(e);
-  const htmlTemplate = render(people);
-  fs.writeFile(outputPath, htmlTemplate, () => {});
-});
+const collectInputs = async (inputs = []) => {
+  const { another, ...answers } = await inquirer.prompt(questions);
+  const newInputs = [...inputs, answers];
+  return another ? collectInputs(newInputs) : newInputs;
+};
 
+const main = async () => {
+  const inputs = await collectInputs();
+  // let e;
+  // if (employeeType === "Manager") {
+  //   e = new Manager(name, id, email, officeNumber);
+  // } else if (employeeType === "Engineer") {
+  //   e = new Engineer(name, id, email, github);
+  // } else if (employeeType === "Intern") {
+  //   e = new Intern(name, id, email, school);
+  // }
+  // people.push(e);
+};
+
+main();
+
+// const htmlTemplate = render(people);
+// fs.writeFile(outputPath, htmlTemplate, () => {});
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
