@@ -1,8 +1,5 @@
-const Employee = require("./lib/Employee");
-const Manager = require("./lib/Manager");
-const Engineer = require("./lib/Engineer");
-const Intern = require("./lib/Intern");
 const makeEmployee = require("./lib/makeEmployee");
+const render = require("./lib/htmlRenderer");
 const questions = require("./lib/questions");
 const inquirer = require("inquirer");
 const path = require("path");
@@ -11,24 +8,19 @@ const fs = require("fs");
 const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
-const render = require("./lib/htmlRenderer");
-const { inherits } = require("util");
-
 const employees = [];
 
-async function init() {
+const init = async () => {
   const person = await inquirer.prompt(questions);
   const emp = makeEmployee(person);
   employees.push(emp);
-  console.log(employees);
-  if (person.another) {
-    init();
-  } else {
-    console.log("All done!");
+  if (person.another) init();
+  else {
+    const htmlTemplate = render(employees);
+    fs.writeFile(outputPath, htmlTemplate, (err) => {
+      err ? console.log(err) : console.log("Success!");
+    });
   }
-}
+};
 
 init();
-
-// const htmlTemplate = render(people);
-// fs.writeFile(outputPath, htmlTemplate, () => {});
